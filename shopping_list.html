@@ -8,32 +8,37 @@
 <!-- Home Screen icons -->
 <link rel="apple-touch-icon" href="icon-green.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-green.png">
-<meta name="theme-color" content="#4CAF50">
+<meta name="theme-color" content="#d2b48c"> <!-- very light chocolate -->
 
 <style>
 body {
   font-family: Arial, sans-serif;
   padding: 10px;
-  background: #ffffff; /* keep page white */
-  color: #064c27; /* dark green text */
+  background: #f5e6d2; /* very light chocolate */
+  color: #4b3f2f; /* dark chocolate text */
 }
 h1 {
   text-align: center;
-  color: #064c27;
+  color: #4b3f2f;
 }
 h2 {
-  margin-top: 20px;
-  margin-bottom: 5px;
-  color: #064c27;
+  text-align: center;
+  margin: 20px 0 10px 0;
+  color: #4b3f2f;
 }
 .item-row {
   display: flex;
+  justify-content: space-between; /* qty to right */
   align-items: center;
-  gap: 8px;
   margin: 6px 0;
-  padding: 4px 6px;
-  border-radius: 4px;
-  background: #e6f4ea; /* very light green for rows */
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #fff5e6; /* creamy background for items */
+}
+.item-left {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 .item-row button {
   padding: 2px 8px;
@@ -41,30 +46,34 @@ h2 {
   cursor: pointer;
   border: none;
   border-radius: 4px;
-  background: #64b373; /* green buttons */
-  color: white;
+  background: #cfa77f; /* light coffee color */
+  color: #4b3f2f;
 }
 .item-row button:hover {
-  background: #519961;
+  background: #b98b61;
 }
 .item-row span.qty {
   min-width: 24px;
-  text-align: center;
+  text-align: right;
   font-weight: bold;
 }
-#reset-btn {
-  display: block;
-  margin: 10px auto;
+#reset-btn, #share-btn, #pdf-btn {
+  display: inline-block;
+  margin: 5px;
   padding: 6px 12px;
   font-size: 16px;
-  background: #64b373;
-  color: white;
+  background: #cfa77f; /* light coffee button */
+  color: #4b3f2f;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
-#reset-btn:hover {
-  background: #519961;
+#reset-btn:hover, #share-btn:hover, #pdf-btn:hover {
+  background: #b98b61;
+}
+#action-bar {
+  margin-top: 20px;
+  text-align: center;
 }
 </style>
 </head>
@@ -73,6 +82,11 @@ h2 {
 <button id="reset-btn">🔄 Reset All</button>
 
 <div id="shopping-list"></div>
+
+<div id="action-bar">
+  <button id="share-btn">📤 Share List</button>
+  <button id="pdf-btn">📄 Export PDF</button>
+</div>
 
 <script>
 const shoppingData = {
@@ -99,6 +113,9 @@ for (let category in shoppingData) {
     const itemRow = document.createElement("div");
     itemRow.className = "item-row";
 
+    const itemLeft = document.createElement("div");
+    itemLeft.className = "item-left";
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = localStorage.getItem(item + "_checked") === "true";
@@ -111,10 +128,6 @@ for (let category in shoppingData) {
 
     const minus = document.createElement("button");
     minus.textContent = "−";
-
-    const qty = document.createElement("span");
-    qty.className = "qty";
-    qty.textContent = localStorage.getItem(item + "_qty") || 1;
 
     const plus = document.createElement("button");
     plus.textContent = "+";
@@ -135,11 +148,18 @@ for (let category in shoppingData) {
       localStorage.setItem(item + "_qty", val);
     };
 
-    itemRow.appendChild(checkbox);
-    itemRow.appendChild(nameSpan);
-    itemRow.appendChild(minus);
+    const qty = document.createElement("span");
+    qty.className = "qty";
+    qty.textContent = localStorage.getItem(item + "_qty") || 1;
+
+    // build row
+    itemLeft.appendChild(checkbox);
+    itemLeft.appendChild(nameSpan);
+    itemLeft.appendChild(minus);
+    itemLeft.appendChild(plus);
+
+    itemRow.appendChild(itemLeft);
     itemRow.appendChild(qty);
-    itemRow.appendChild(plus);
 
     listDiv.appendChild(itemRow);
   });
@@ -156,6 +176,28 @@ document.getElementById("reset-btn").onclick = () => {
     }
     location.reload();
   }
+};
+
+// Share button
+document.getElementById("share-btn").onclick = () => {
+  if(navigator.share){
+    navigator.share({
+      title: "لیست خرید من 🛒",
+      text: "لیست خرید هفتگی من:",
+      url: window.location.href
+    }).catch(console.error);
+  } else {
+    alert("Sharing not supported on this browser.");
+  }
+};
+
+// PDF button (simple HTML export)
+document.getElementById("pdf-btn").onclick = () => {
+  const blob = new Blob([document.getElementById("shopping-list").outerHTML], {type: "text/html"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "shopping_list.html";
+  a.click();
 };
 </script>
 </body>
