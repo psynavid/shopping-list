@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛒 لیست خرید هفتگی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body { font-family: 'Vazirmatn', sans-serif; margin:0; padding:0; background:#f0f2f5; }
+h1 { text-align:center; padding:20px; font-size:24px; }
+.container { max-width:600px; margin:auto; padding:10px; }
+.card { background:white; border-radius:10px; padding:15px; margin-bottom:15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.card h2 { display:flex; align-items:center; font-size:18px; margin-bottom:10px; }
+.card h2 span { margin-left:8px; }
+.item { display:flex; align-items:center; margin:5px 0; font-size:16px; }
+.item input { margin-left:10px; transform: scale(1.2); }
+.buttons { display:flex; justify-content:space-between; margin-top:15px; flex-wrap:wrap; gap:10px; }
+button { padding:10px 15px; font-size:16px; border:none; border-radius:5px; background:#4CAF50; color:white; cursor:pointer; flex:1; }
+button.clear { background:#f44336; }
+</style>
+</head>
+<body>
+
+<h1>🛒 لیست خرید هفتگی</h1>
+<div class="container" id="shopping-list"></div>
+
+<div class="container buttons">
+    <button onclick="showChecked()">✅ نمایش انتخاب‌ها</button>
+    <button onclick="downloadPDF()">📄 دانلود PDF</button>
+    <button onclick="shareList()">📤 اشتراک‌گذاری لیست</button>
+    <button class="clear" onclick="clearAll()">🗑 پاک کردن همه</button>
+</div>
+
+<script>
+const shoppingData = {
+  "🥬 سبزیجات": ["پیاز","سیب‌زمینی","سیب‌زمینی کوچک","هویج","هویج کوچک","گوجه‌فرنگی","گوجه گیلاسی","خیار","بادمجان","کدو","بروکلی","گل کلم","کاهو","اسفناج","شلغم","لبو","قارچ","لوبیا سبز فریز شده","ذرت فریز شده","فلفل دلمه‌ای","فلفل سبز"],
+  "🍎 میوه‌جات": ["موز","سیب","توت‌فرنگی","پرتقال","نارنگی","انگور","هندوانه","بلوبری"],
+  "🥛 لبنیات": ["شیر","ماست","دوغ","خامه","خامه صبحانه","کره","پنیر","پنیر پیتزا"],
+  "🍞 نان و غلات": ["نان تست","نان پیتا","نان پیتزا","برنج","نان همبر","آرد"],
+  "🥩 پروتئین و غذاهای آماده": ["تخم‌مرغ","گوشت مرغ","ماهی سالمون","گوشت چرخ‌کرده","گوشت تکه‌شده","شنیسل","ناگت","سوشی","نودل"],
+  "🌱 حبوبات و ادویه": ["لوبیا","عدس","نمک","ادویه"],
+  "🫙 مواد غذایی": ["روغن مایع","روغن زیتون","سرکه","مربا","عسل","سس کچاپ","شکلات صبحانه","پینات","زیتون","خیارشور","چیپس","پاپ‌کورن","بستنی"],
+  "☕ نوشیدنی‌ها": ["قهوه"],
+  "🍪 اسنک و خوراکی‌ها": ["اسنک مدرسه","کیک و شیرینی عصرانه"],
+  "🧻 بهداشتی و شوینده": ["دستمال کاغذی","دستمال توالت","مایع ظرف‌شویی","تاید ماشین لباس‌شویی","تاید ماشین ظرف‌شویی","کیسه سطل زباله","صابون","شامپو"],
+  "💊 دارو": ["دارو"],
+  "👕 لباس و پوشاک": ["لباس و پوشاک"],
+  "🥜 خشکبار و مغزها": ["مغز گردو","مغز بادام"]
+};
+
+const listDiv = document.getElementById("shopping-list");
+
+function loadList() {
+  for (let category in shoppingData) {
+    const card = document.createElement("div");
+    card.className = "card";
+    const h2 = document.createElement("h2");
+    h2.innerHTML = `<span>${category}</span>`;
+    card.appendChild(h2);
+
+    shoppingData[category].forEach(item => {
+      const label = document.createElement("label");
+      label.className = "item";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = item;
+      if(localStorage.getItem(item) === "true") checkbox.checked = true;
+      checkbox.addEventListener("change", () => {
+        localStorage.setItem(item, checkbox.checked);
+      });
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(item));
+      card.appendChild(label);
+    });
+    listDiv.appendChild(card);
+  }
+}
+
+function showChecked() {
+  const checkedItems = [];
+  document.querySelectorAll("input[type=checkbox]").forEach(cb => {
+    if(cb.checked) checkedItems.push(cb.value);
+  });
+  alert("موارد انتخاب شده:\\n" + checkedItems.join(", "));
+}
+
+function clearAll() {
+  if(confirm("آیا مطمئن هستید که همه تیک‌ها پاک شود؟")) {
+    document.querySelectorAll("input[type=checkbox]").forEach(cb => {
+      cb.checked = false;
+      localStorage.setItem(cb.value, false);
+    });
+  }
+}
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+  let y = 10;
+  doc.setFontSize(18);
+  doc.text("🛒 لیست خرید هفتگی", 105, y, {align:"center"});
+  y += 10;
+  doc.setFontSize(12);
+
+  for (let category in shoppingData) {
+    y += 6;
+    doc.setFont(undefined, "bold");
+    doc.text(category, 10, y);
+    y += 6;
+    doc.setFont(undefined, "normal");
+    shoppingData[category].forEach(item => {
+      const checked = localStorage.getItem(item) === "true" ? "☑" : "☐";
+      doc.text(`${checked} ${item}`, 15, y);
+      y += 6;
+      if(y > 280) { doc.addPage(); y = 10; }
+    });
+  }
+  doc.save("ShoppingList.pdf");
+}
+
+function shareList() {
+  let message = "🛒 لیست خرید هفتگی:\\n";
+  for (let category in shoppingData) {
+    let itemsChecked = [];
+    shoppingData[category].forEach(item => {
+      if(localStorage.getItem(item) === "true") itemsChecked.push(item);
+    });
+    if(itemsChecked.length > 0) {
+      message += `\\n${category}:\\n`;
+      itemsChecked.forEach(it => { message += ` - ${it}\\n`; });
+    }
+  }
+  if(navigator.share){
+    navigator.share({ title: "لیست خرید هفتگی", text: message }).catch(console.error);
+  } else {
+    prompt("لیست آماده برای کپی و اشتراک‌گذاری:", message);
+  }
+}
+
+loadList();
+</script>
+</body>
+</html>
