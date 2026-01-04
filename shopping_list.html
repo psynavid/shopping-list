@@ -6,8 +6,8 @@
 <title>Shopping List</title>
 
 <!-- Home Screen icons -->
-<link rel="apple-touch-icon" href="icon-green.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-green.png">
+<link rel="apple-touch-icon" href="icon-green-fancy.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-green-fancy.png">
 <meta name="theme-color" content="#d2b48c"> <!-- very light chocolate -->
 
 <style>
@@ -28,17 +28,22 @@ h2 {
 }
 .item-row {
   display: flex;
-  justify-content: space-between; /* qty to right */
+  justify-content: flex-end; /* push everything to far right */
   align-items: center;
   margin: 6px 0;
   padding: 6px 10px;
   border-radius: 6px;
   background: #fff5e6; /* creamy background for items */
 }
-.item-left {
+.item-name-group {
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 8px;
+}
+.qty-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .item-row button {
   padding: 2px 8px;
@@ -54,7 +59,7 @@ h2 {
 }
 .item-row span.qty {
   min-width: 24px;
-  text-align: right;
+  text-align: center;
   font-weight: bold;
 }
 #reset-btn, #share-btn, #pdf-btn {
@@ -75,6 +80,20 @@ h2 {
   margin-top: 20px;
   text-align: center;
 }
+#special-orders textarea {
+  width: 90%;
+  max-width: 400px;
+  min-height: 40px;
+  padding:6px;
+  border-radius:6px;
+  border:1px solid #cfa77f;
+  resize: vertical;
+}
+#special-orders label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6px;
+}
 </style>
 </head>
 <body>
@@ -82,6 +101,12 @@ h2 {
 <button id="reset-btn">🔄 Reset All</button>
 
 <div id="shopping-list"></div>
+
+<!-- Special Orders Box -->
+<div id="special-orders" style="margin-top: 20px; text-align: center;">
+  <label for="special-text">سفارشات ویژه</label>
+  <textarea id="special-text" placeholder="هر چیزی که لازم دارید..."></textarea>
+</div>
 
 <div id="action-bar">
   <button id="share-btn">📤 Share List</button>
@@ -113,8 +138,8 @@ for (let category in shoppingData) {
     const itemRow = document.createElement("div");
     itemRow.className = "item-row";
 
-    const itemLeft = document.createElement("div");
-    itemLeft.className = "item-left";
+    const itemGroup = document.createElement("div");
+    itemGroup.className = "item-name-group";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -126,15 +151,22 @@ for (let category in shoppingData) {
     const nameSpan = document.createElement("span");
     nameSpan.textContent = item;
 
+    const qtyGroup = document.createElement("div");
+    qtyGroup.className = "qty-group";
+
     const minus = document.createElement("button");
     minus.textContent = "−";
+
+    const qty = document.createElement("span");
+    qty.className = "qty";
+    qty.textContent = localStorage.getItem(item + "_qty") || 1;
 
     const plus = document.createElement("button");
     plus.textContent = "+";
 
     minus.onclick = () => {
       let val = parseInt(qty.textContent);
-      if (val > 1) {
+      if(val > 1) {
         val--;
         qty.textContent = val;
         localStorage.setItem(item + "_qty", val);
@@ -148,19 +180,18 @@ for (let category in shoppingData) {
       localStorage.setItem(item + "_qty", val);
     };
 
-    const qty = document.createElement("span");
-    qty.className = "qty";
-    qty.textContent = localStorage.getItem(item + "_qty") || 1;
+    // Build qty group: − [Qty] +
+    qtyGroup.appendChild(minus);
+    qtyGroup.appendChild(qty);
+    qtyGroup.appendChild(plus);
 
-    // build row
-    itemLeft.appendChild(checkbox);
-    itemLeft.appendChild(nameSpan);
-    itemLeft.appendChild(minus);
-    itemLeft.appendChild(plus);
+    // Build item group: checkbox + name + qty group
+    itemGroup.appendChild(checkbox);
+    itemGroup.appendChild(nameSpan);
+    itemGroup.appendChild(qtyGroup);
 
-    itemRow.appendChild(itemLeft);
-    itemRow.appendChild(qty);
-
+    // Append entire row
+    itemRow.appendChild(itemGroup);
     listDiv.appendChild(itemRow);
   });
 }
@@ -168,7 +199,7 @@ for (let category in shoppingData) {
 // Reset All button
 document.getElementById("reset-btn").onclick = () => {
   if(confirm("Are you sure you want to reset all checkboxes and quantities?")) {
-    for (let category in shoppingData) {
+    for(let category in shoppingData){
       shoppingData[category].forEach(item => {
         localStorage.removeItem(item + "_checked");
         localStorage.removeItem(item + "_qty");
@@ -183,7 +214,7 @@ document.getElementById("share-btn").onclick = () => {
   if(navigator.share){
     navigator.share({
       title: "لیست خرید من 🛒",
-      text: "لیست خرید هفتگی من:",
+      text: "لیست خرید هفتگی من:\n" + document.getElementById("special-text").value,
       url: window.location.href
     }).catch(console.error);
   } else {
@@ -191,14 +222,21 @@ document.getElementById("share-btn").onclick = () => {
   }
 };
 
-// PDF button (simple HTML export)
+// PDF button
 document.getElementById("pdf-btn").onclick = () => {
-  const blob = new Blob([document.getElementById("shopping-list").outerHTML], {type: "text/html"});
+  const blob = new Blob([document.getElementById("shopping-list").outerHTML + "<br>سفارشات ویژه:<br>" + document.getElementById("special-text").value], {type: "text/html"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "shopping_list.html";
   a.click();
 };
+
+// Special Orders persistence
+const specialText = document.getElementById("special-text");
+specialText.value = localStorage.getItem("special_orders") || "";
+specialText.addEventListener("input", () => {
+  localStorage.setItem("special_orders", specialText.value);
+});
 </script>
 </body>
 </html>
