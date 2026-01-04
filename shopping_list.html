@@ -8,14 +8,14 @@
 <!-- Home Screen icons -->
 <link rel="apple-touch-icon" href="icon-green-fancy.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-green-fancy.png">
-<meta name="theme-color" content="#d2b48c"> <!-- very light chocolate -->
+<meta name="theme-color" content="#f5e6d2"> <!-- very light chocolate -->
 
 <style>
 body {
   font-family: Arial, sans-serif;
   padding: 10px;
   background: #f5e6d2; /* very light chocolate */
-  color: #4b3f2f; /* dark chocolate text */
+  color: #4b3f2f;
 }
 h1 {
   text-align: center;
@@ -28,14 +28,14 @@ h2 {
 }
 .item-row {
   display: flex;
-  justify-content: flex-end; /* push everything to far right */
+  justify-content: space-between; /* left + right groups */
   align-items: center;
   margin: 6px 0;
   padding: 6px 10px;
   border-radius: 6px;
-  background: #fff5e6; /* creamy background for items */
+  background: #fff5e6; /* creamy background */
 }
-.item-name-group {
+.item-left {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -88,6 +88,7 @@ h2 {
   border-radius:6px;
   border:1px solid #cfa77f;
   resize: vertical;
+  text-align: right; /* RTL text inside box */
 }
 #special-orders label {
   font-weight: bold;
@@ -124,7 +125,7 @@ const shoppingData = {
   "بهداشت و شوینده 🧴": ["صابون","شامپو","مایع ظرف شویی","تاید ماشین لباس شویی","تاید ماشین ظرف شویی","دستمال کاغذی","دستمال توالت"],
   "پوشاک 👕": ["لباس و پوشاک"],
   "خشکبار و مغزها 🌰": ["مغز گردو","مغز بادام"],
-  "دیگر": ["دارو","قهوه","بستنی","پینات"]
+  "متفرقه": ["دارو","قهوه","بستنی","پینات"] // updated title
 };
 
 const listDiv = document.getElementById("shopping-list");
@@ -138,8 +139,9 @@ for (let category in shoppingData) {
     const itemRow = document.createElement("div");
     itemRow.className = "item-row";
 
-    const itemGroup = document.createElement("div");
-    itemGroup.className = "item-name-group";
+    // LEFT: checkbox + name
+    const itemLeft = document.createElement("div");
+    itemLeft.className = "item-left";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -151,6 +153,10 @@ for (let category in shoppingData) {
     const nameSpan = document.createElement("span");
     nameSpan.textContent = item;
 
+    itemLeft.appendChild(checkbox);
+    itemLeft.appendChild(nameSpan);
+
+    // RIGHT: quantity
     const qtyGroup = document.createElement("div");
     qtyGroup.className = "qty-group";
 
@@ -180,18 +186,14 @@ for (let category in shoppingData) {
       localStorage.setItem(item + "_qty", val);
     };
 
-    // Build qty group: − [Qty] +
     qtyGroup.appendChild(minus);
     qtyGroup.appendChild(qty);
     qtyGroup.appendChild(plus);
 
-    // Build item group: checkbox + name + qty group
-    itemGroup.appendChild(checkbox);
-    itemGroup.appendChild(nameSpan);
-    itemGroup.appendChild(qtyGroup);
+    // Append left + right to row
+    itemRow.appendChild(itemLeft);
+    itemRow.appendChild(qtyGroup);
 
-    // Append entire row
-    itemRow.appendChild(itemGroup);
     listDiv.appendChild(itemRow);
   });
 }
