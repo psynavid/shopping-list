@@ -4,51 +4,88 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shopping List</title>
+
+<!-- Home Screen icons -->
+<link rel="apple-touch-icon" href="icon-green.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-green.png">
+<meta name="theme-color" content="#4CAF50">
+
 <style>
 body {
   font-family: Arial, sans-serif;
   padding: 10px;
-  background: #fff;
+  background: #ffffff; /* keep page white */
+  color: #064c27; /* dark green text */
+}
+h1 {
+  text-align: center;
+  color: #064c27;
 }
 h2 {
   margin-top: 20px;
   margin-bottom: 5px;
+  color: #064c27;
 }
 .item-row {
   display: flex;
   align-items: center;
   gap: 8px;
   margin: 6px 0;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #e6f4ea; /* very light green for rows */
 }
 .item-row button {
   padding: 2px 8px;
   font-size: 16px;
   cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background: #64b373; /* green buttons */
+  color: white;
+}
+.item-row button:hover {
+  background: #519961;
 }
 .item-row span.qty {
   min-width: 24px;
   text-align: center;
   font-weight: bold;
 }
+#reset-btn {
+  display: block;
+  margin: 10px auto;
+  padding: 6px 12px;
+  font-size: 16px;
+  background: #64b373;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#reset-btn:hover {
+  background: #519961;
+}
 </style>
 </head>
 <body>
 <h1>لیست خرید هفتگی 🛒</h1>
+<button id="reset-btn">🔄 Reset All</button>
 
 <div id="shopping-list"></div>
 
 <script>
 const shoppingData = {
-  "سبزیجات 🥦": ["پیاز", "سیب زمینی", "سیب زمینی کوچک", "هویج", "هویج کوچک", "گوجه فرنگی", "گوجه گیلاسی", "شلغم", "کدو", "بادمجان", "لوبیا سبز فریز شده", "فلفل دلمه", "فلفل سبز", "کاهو", "گل کلم", "اسفناج", "خیار", "خیار شور", "برکلی", "لوبیا", "عدس", "قارچ", "ذرت فریز شده"],
-  "میوه جات 🍎": ["سیب", "موز", "توت فرنگی", "انگور", "هندوانه", "بلوبری", "نارنگی", "پرتقال", "لبو"],
-  "لبنیات 🥛": ["شیر", "ماست", "پنیر", "پنیر پیتزا", "خامه", "دوغ", "کره", "خامه صبحانه"],
-  "گوشت و ماهی 🍗": ["گوشت مرغ", "گوشت چرخ کرده", "گوشت تیکه شده", "شینسل", "ناگت", "ماهی سالمون"],
-  "نان و غلات 🍞": ["نان تست", "نان پیتزا", "نان همبر"],
-  "دیگر 🥫": ["برنج", "مربا", "روغن مایع", "روغن زیتون", "سرکه", "آرد", "نمک", "ادویه", "سس کچاپ", "شکلات صبحانه", "چیپس", "پاپ کرن", "اسنک برای مدرسه", "کیک و شیرینی عصرانه", "نودل", "سوشی"],
-  "بهداشت و شوینده 🧴": ["صابون", "شامپو", "مایع ظرف شویی", "تاید ماشین لباس شویی", "تاید ماشین ظرف شویی", "دستمال کاغذی", "دستمال توالت"],
+  "سبزیجات 🥦": ["پیاز","سیب زمینی","سیب زمینی کوچک","هویج","هویج کوچک","گوجه فرنگی","گوجه گیلاسی","شلغم","کدو","بادمجان","لوبیا سبز فریز شده","فلفل دلمه","فلفل سبز","کاهو","گل کلم","اسفناج","خیار","خیار شور","برکلی","لوبیا","عدس","قارچ","ذرت فریز شده"],
+  "میوه جات 🍎": ["سیب","موز","توت فرنگی","انگور","هندوانه","بلوبری","نارنگی","پرتقال","لبو"],
+  "لبنیات 🥛": ["شیر","ماست","پنیر","پنیر پیتزا","خامه","دوغ","کره","خامه صبحانه"],
+  "گوشت و ماهی 🍗": ["گوشت مرغ","گوشت چرخ کرده","گوشت تیکه شده","شینسل","ناگت","ماهی سالمون"],
+  "نان و غلات 🍞": ["نان تست","نان پیتزا","نان همبر"],
+  "دیگر 🥫": ["برنج","مربا","روغن مایع","روغن زیتون","سرکه","آرد","نمک","ادویه","سس کچاپ","شکلات صبحانه","چیپس","پاپ کرن","اسنک برای مدرسه","کیک و شیرینی عصرانه","نودل","سوشی"],
+  "بهداشت و شوینده 🧴": ["صابون","شامپو","مایع ظرف شویی","تاید ماشین لباس شویی","تاید ماشین ظرف شویی","دستمال کاغذی","دستمال توالت"],
   "پوشاک 👕": ["لباس و پوشاک"],
-  "خشکبار و مغزها 🌰": ["مغز گردو", "مغز بادام"],
-  "دیگر": ["دارو", "قهوه", "بستنی", "پینات"]
+  "خشکبار و مغزها 🌰": ["مغز گردو","مغز بادام"],
+  "دیگر": ["دارو","قهوه","بستنی","پینات"]
 };
 
 const listDiv = document.getElementById("shopping-list");
@@ -107,6 +144,19 @@ for (let category in shoppingData) {
     listDiv.appendChild(itemRow);
   });
 }
+
+// Reset All button
+document.getElementById("reset-btn").onclick = () => {
+  if(confirm("Are you sure you want to reset all checkboxes and quantities?")) {
+    for (let category in shoppingData) {
+      shoppingData[category].forEach(item => {
+        localStorage.removeItem(item + "_checked");
+        localStorage.removeItem(item + "_qty");
+      });
+    }
+    location.reload();
+  }
+};
 </script>
 </body>
 </html>
