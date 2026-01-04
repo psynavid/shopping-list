@@ -1,97 +1,162 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shopping List</title>
+<title>لیست خرید</title>
 
-<link rel="apple-touch-icon" href="icon-green-fancy.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-green-fancy.png">
 <meta name="theme-color" content="#f5e6d2">
+<link rel="apple-touch-icon" href="icon-green-fancy.png">
+<link rel="icon" sizes="192x192" href="icon-green-fancy.png">
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  padding: 10px;
   background: #f5e6d2;
+  margin: 0;
+  padding: 10px;
   color: #4b3f2f;
 }
-h1 { text-align: center; color: #4b3f2f; }
-h2 { text-align: center; margin: 20px 0 10px 0; color: #4b3f2f; }
-.item-row { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; padding: 6px 10px; border-radius: 6px; background: #fff5e6; }
-.item-left { display: flex; align-items: center; gap: 8px; }
-.qty-group { display: flex; align-items: center; gap: 4px; }
-.item-row button { padding: 2px 8px; font-size: 16px; cursor: pointer; border: none; border-radius: 4px; background: #cfa77f; color: #4b3f2f; }
-.item-row button:hover { background: #b98b61; }
-.item-row span.qty { min-width: 24px; text-align: center; font-weight: bold; }
-#reset-btn, #share-btn, #pdf-btn { display: inline-block; margin: 5px; padding: 6px 12px; font-size: 16px; background: #cfa77f; color: #4b3f2f; border: none; border-radius: 6px; cursor: pointer; }
-#reset-btn:hover, #share-btn:hover, #pdf-btn:hover { background: #b98b61; }
-#action-bar { margin-top: 20px; text-align: center; }
-#special-orders textarea { width: 90%; max-width: 400px; min-height: 40px; padding:6px; border-radius:6px; border:1px solid #cfa77f; resize: vertical; text-align: right; }
-#special-orders label { font-weight: bold; display: block; margin-bottom: 6px; }
+
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+h2 {
+  text-align: center;
+  margin: 18px 0 8px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff3e0;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.qty-group button {
+  background: #d2b48c;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 16px;
+}
+
+.qty {
+  min-width: 24px;
+  text-align: center;
+  font-weight: bold;
+}
+
+button {
+  cursor: pointer;
+}
+
+#reset-btn, #share-btn, #share-text-btn, #pdf-btn {
+  background: #cfa77f;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin: 4px;
+}
+
+#action-bar {
+  text-align: center;
+  margin-top: 14px;
+}
+
+#special-orders {
+  text-align: center;
+  margin-top: 16px;
+}
+
+#special-orders textarea {
+  width: 90%;
+  max-width: 420px;
+  min-height: 40px;
+  border-radius: 8px;
+  padding: 6px;
+  border: 1px solid #cfa77f;
+  resize: vertical;
+  direction: rtl;
+}
 </style>
 </head>
+
 <body>
-<h1>لیست خرید هفتگی 🛒</h1>
-<button id="reset-btn">🔄 Reset All</button>
+
+<h1>🛒 لیست خرید هفتگی</h1>
+
+<div style="text-align:center;">
+  <button id="reset-btn">🔄 Reset All</button>
+</div>
+
 <div id="shopping-list"></div>
 
-<!-- Special Orders Box -->
-<div id="special-orders" style="margin-top: 20px; text-align: center;">
-  <label for="special-text">سفارشات ویژه</label>
+<div id="special-orders">
+  <strong>سفارشات ویژه</strong><br>
   <textarea id="special-text" placeholder="هر چیزی که لازم دارید..."></textarea>
 </div>
 
 <div id="action-bar">
-  <button id="share-btn">📤 Share List</button>
+  <button id="share-btn">📤 Share App</button>
+  <button id="share-text-btn">📋 Share Checked Items</button>
   <button id="pdf-btn">📄 Export PDF</button>
 </div>
 
 <script>
 const shoppingData = {
-  "سبزیجات 🥦": ["کاهو","برکلی","گل کلم","اسفناج","پیاز","سیب زمینی","سیب زمینی کوچک","هویج","هویج کوچک","گوجه فرنگی","گوجه گیلاسی","شلغم","کدو","بادمجان","فلفل دلمه","فلفل سبز","خیار","خیار شور","لوبیا","لوبیا سبز فریز شده","عدس","قارچ","ذرت فریز شده"],
-  "میوه جات 🍎": ["سیب","موز","توت فرنگی","انگور","هندوانه","بلوبری","نارنگی","پرتقال","لبو"],
-  "لبنیات 🥛": ["شیر","ماست","پنیر","پنیر پیتزا","خامه","دوغ","کره","خامه صبحانه","بستنی"],
-  "گوشت و ماهی 🍗": ["گوشت مرغ","گوشت چرخ کرده","گوشت تیکه شده","شینسل","ناگت","ماهی سالمون"],
-  "نان و غلات 🍞": ["نان","نان تست","نان پیتزا","نان همبر","آرد","برنج"],
-  "دیگر 🥫": ["مربا","روغن مایع","روغن زیتون","سرکه","نمک","ادویه","سس کچاپ","شکلات صبحانه","کره بادام زمینی","چیپس","پاپ کرن","اسنک برای مدرسه","کیک و شیرینی عصرانه","نودل","سوشی"],
-  "بهداشت و شوینده 🧴": ["صابون","شامپو","مایع ظرف شویی","تاید ماشین لباس شویی","تاید ماشین ظرف شویی","دستمال کاغذی","دستمال توالت"],
-  "پوشاک 👕": ["لباس و پوشاک"],
-  "خشکبار و مغزها 🌰": ["مغز گردو","مغز بادام","خرما"],
-  "متفرقه": ["دارو","قهوه"]
+  "سبزیجات 🥦": ["بادمجان","برکلی","پیاز","سیب زمینی","سیب زمینی کوچک","شلغم","اسفناج","کاهو","کدو","گل کلم","گوجه فرنگی","گوجه گیلاسی","خیار","خیار شور","فلفل دلمه","فلفل سبز","هویج","هویج کوچک","لوبیا","لوبیا سبز فریز شده","عدس","قارچ","ذرت فریز شده"],
+  "میوه جات 🍎": ["انگور","بلوبری","پرتقال","توت فرنگی","سیب","موز","نارنگی","هندوانه","لبو"],
+  "لبنیات 🥛": ["بستنی","پنیر","پنیر پیتزا","خامه","خامه صبحانه","دوغ","شیر","ماست","کره"],
+  "گوشت و ماهی 🍗": ["گوشت چرخ کرده","گوشت تیکه شده","گوشت مرغ","شینسل","ناگت","ماهی سالمون"],
+  "نان و غلات 🍞": ["آرد","برنج","نان","نان تست","نان پیتزا","نان همبر"],
+  "خشکبار و مغزها 🌰": ["خرما","مغز بادام","مغز گردو"],
+  "بهداشت و شوینده 🧴": ["دستمال توالت","دستمال کاغذی","صابون","شامپو","مایع ظرف شویی","تاید ماشین لباس شویی","تاید ماشین ظرف شویی"],
+  "متفرقه": ["ادویه","اسنک برای مدرسه","چیپس","سس کچاپ","شکلات صبحانه","کره بادام زمینی","قهوه","کیک و شیرینی عصرانه","نودل","پاپ کرن","روغن زیتون","روغن مایع","سرکه","نمک","سوشی","مربا","دارو"]
 };
 
-// Sort items alphabetically within each group
-for(let category in shoppingData){
-  shoppingData[category].sort();
-}
+for (let cat in shoppingData) shoppingData[cat].sort();
 
 const listDiv = document.getElementById("shopping-list");
 
-for (let category in shoppingData) {
+for (let cat in shoppingData) {
   const h2 = document.createElement("h2");
-  h2.textContent = category;
+  h2.textContent = cat;
   listDiv.appendChild(h2);
 
-  shoppingData[category].forEach(item => {
-    const itemRow = document.createElement("div");
-    itemRow.className = "item-row";
+  shoppingData[cat].forEach(item => {
+    const row = document.createElement("div");
+    row.className = "item-row";
 
-    // LEFT: checkbox + name
-    const itemLeft = document.createElement("div");
-    itemLeft.className = "item-left";
+    const left = document.createElement("div");
+    left.className = "item-left";
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = localStorage.getItem(item + "_checked") === "true";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = localStorage.getItem(item+"_checked")==="true";
 
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = item;
+    const name = document.createElement("span");
+    name.textContent = item;
 
-    itemLeft.appendChild(checkbox);
-    itemLeft.appendChild(nameSpan);
+    left.append(cb,name);
 
-    // RIGHT: quantity (changes only if checked)
     const qtyGroup = document.createElement("div");
     qtyGroup.className = "qty-group";
 
@@ -100,92 +165,84 @@ for (let category in shoppingData) {
 
     const qty = document.createElement("span");
     qty.className = "qty";
-    qty.textContent = checkbox.checked ? (localStorage.getItem(item + "_qty") || 1) : 1;
+    qty.textContent = cb.checked ? (localStorage.getItem(item+"_qty")||1) : 1;
 
     const plus = document.createElement("button");
     plus.textContent = "+";
 
     minus.onclick = () => {
-      let val = parseInt(qty.textContent);
-      if(val > 1){
-        val--;
-        qty.textContent = val;
-        if(checkbox.checked) localStorage.setItem(item + "_qty", val);
-      }
+      if (!cb.checked) return;
+      let v = parseInt(qty.textContent);
+      if (v>1){ qty.textContent=--v; localStorage.setItem(item+"_qty",v); }
     };
+
     plus.onclick = () => {
-      let val = parseInt(qty.textContent);
-      val++;
-      qty.textContent = val;
-      if(checkbox.checked) localStorage.setItem(item + "_qty", val);
+      if (!cb.checked) return;
+      let v = parseInt(qty.textContent)+1;
+      qty.textContent=v;
+      localStorage.setItem(item+"_qty",v);
     };
 
-    checkbox.addEventListener("change", () => {
-      if(checkbox.checked){
-        localStorage.setItem(item + "_checked", true);
-        localStorage.setItem(item + "_qty", qty.textContent);
+    cb.onchange = () => {
+      if (cb.checked){
+        localStorage.setItem(item+"_checked",true);
+        localStorage.setItem(item+"_qty",qty.textContent);
       } else {
-        localStorage.removeItem(item + "_checked");
-        localStorage.removeItem(item + "_qty");
-        qty.textContent = 1;
+        localStorage.removeItem(item+"_checked");
+        localStorage.removeItem(item+"_qty");
+        qty.textContent=1;
       }
-    });
+    };
 
-    qtyGroup.appendChild(minus);
-    qtyGroup.appendChild(qty);
-    qtyGroup.appendChild(plus);
-
-    itemRow.appendChild(itemLeft);
-    itemRow.appendChild(qtyGroup);
-
-    listDiv.appendChild(itemRow);
+    qtyGroup.append(minus,qty,plus);
+    row.append(left,qtyGroup);
+    listDiv.appendChild(row);
   });
 }
 
-// Reset All button
+// Reset
 document.getElementById("reset-btn").onclick = () => {
-  if(confirm("Are you sure you want to reset all checkboxes and quantities?")) {
-    for(let category in shoppingData){
-      shoppingData[category].forEach(item => {
-        localStorage.removeItem(item + "_checked");
-        localStorage.removeItem(item + "_qty");
-      });
-    }
-    // Clear special orders box
-    const specialText = document.getElementById("special-text");
-    specialText.value = "";
-    localStorage.removeItem("special_orders");
-
-    location.reload();
-  }
+  if(!confirm("Reset everything?")) return;
+  localStorage.clear();
+  document.getElementById("special-text").value="";
+  location.reload();
 };
 
-// Share button
+// Share app
 document.getElementById("share-btn").onclick = () => {
-  if(navigator.share){
-    navigator.share({
-      title: "لیست خرید من 🛒",
-      text: "لیست خرید هفتگی من:\n" + document.getElementById("special-text").value,
-      url: window.location.href
-    }).catch(console.error);
-  } else { alert("Sharing not supported on this browser."); }
+  navigator.share?.({ title:"Shopping List", url:location.href });
 };
 
-// PDF button
+// Share checked items as text
+document.getElementById("share-text-btn").onclick = () => {
+  let text="🛒 Shopping List\n\n", has=false;
+  for(let c in shoppingData){
+    shoppingData[c].forEach(i=>{
+      if(localStorage.getItem(i+"_checked")==="true"){
+        has=true;
+        text+=`✓ ${i} × ${localStorage.getItem(i+"_qty")||1}\n`;
+      }
+    });
+  }
+  const s=localStorage.getItem("special_orders");
+  if(s) text+=`\nسفارشات ویژه:\n${s}`;
+  if(!has && !s){ alert("Nothing to share"); return; }
+  navigator.share? navigator.share({text}) : alert(text);
+};
+
+// PDF
 document.getElementById("pdf-btn").onclick = () => {
-  const blob = new Blob([document.getElementById("shopping-list").outerHTML + "<br>سفارشات ویژه:<br>" + document.getElementById("special-text").value], {type: "text/html"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "shopping_list.html";
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([document.body.innerHTML],{type:"text/html"}));
+  a.download="shopping_list.html";
   a.click();
 };
 
-// Special Orders persistence
-const specialText = document.getElementById("special-text");
-specialText.value = localStorage.getItem("special_orders") || "";
-specialText.addEventListener("input", () => {
-  localStorage.setItem("special_orders", specialText.value);
-});
+// Special orders persistence
+const sp=document.getElementById("special-text");
+sp.value=localStorage.getItem("special_orders")||"";
+sp.oninput=()=>localStorage.setItem("special_orders",sp.value);
 </script>
+
 </body>
 </html>
