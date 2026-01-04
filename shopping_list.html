@@ -60,8 +60,48 @@ function loadList() {
     card.appendChild(h2);
 
     shoppingData[category].forEach(item => {
-      const label = document.createElement("label");
-      label.className = "item";
+      const itemRow = document.createElement("div");
+itemRow.className = "item";
+
+const checkbox = document.createElement("input");
+checkbox.type = "checkbox";
+checkbox.checked = localStorage.getItem(item + "_checked") === "true";
+
+const nameSpan = document.createElement("span");
+nameSpan.textContent = item;
+
+const minus = document.createElement("button");
+minus.textContent = "−";
+minus.className = "qty-btn";
+
+const qty = document.createElement("span");
+qty.className = "qty";
+qty.textContent = localStorage.getItem(item + "_qty") || 1;
+
+const plus = document.createElement("button");
+plus.textContent = "+";
+plus.className = "qty-btn";
+        checkbox.addEventListener("change", () => {
+  localStorage.setItem(item + "_checked", checkbox.checked);
+});
+
+minus.onclick = () => {
+  let val = parseInt(qty.textContent);
+  if (val > 1) {
+    val--;
+    qty.textContent = val;
+    localStorage.setItem(item + "_qty", val);
+  }
+};
+
+plus.onclick = () => {
+  let val = parseInt(qty.textContent);
+  val++;
+  qty.textContent = val;
+  localStorage.setItem(item + "_qty", val);
+};
+
+
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.value = item;
@@ -69,9 +109,14 @@ function loadList() {
       checkbox.addEventListener("change", () => {
         localStorage.setItem(item, checkbox.checked);
       });
-      label.appendChild(checkbox);
-      label.appendChild(document.createTextNode(item));
-      card.appendChild(label);
+      itemRow.appendChild(checkbox);
+itemRow.appendChild(nameSpan);
+itemRow.appendChild(minus);
+itemRow.appendChild(qty);
+itemRow.appendChild(plus);
+
+card.appendChild(itemRow);
+
     });
     listDiv.appendChild(card);
   }
@@ -142,3 +187,4 @@ loadList();
 </script>
 </body>
 </html>
+
