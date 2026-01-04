@@ -5,102 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shopping List</title>
 
-<!-- Home Screen icons -->
 <link rel="apple-touch-icon" href="icon-green-fancy.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-green-fancy.png">
-<meta name="theme-color" content="#f5e6d2"> <!-- very light chocolate -->
+<meta name="theme-color" content="#f5e6d2">
 
 <style>
 body {
   font-family: Arial, sans-serif;
   padding: 10px;
-  background: #f5e6d2; /* very light chocolate */
+  background: #f5e6d2;
   color: #4b3f2f;
 }
-h1 {
-  text-align: center;
-  color: #4b3f2f;
-}
-h2 {
-  text-align: center;
-  margin: 20px 0 10px 0;
-  color: #4b3f2f;
-}
-.item-row {
-  display: flex;
-  justify-content: space-between; /* left + right groups */
-  align-items: center;
-  margin: 6px 0;
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: #fff5e6; /* creamy background */
-}
-.item-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.qty-group {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.item-row button {
-  padding: 2px 8px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 4px;
-  background: #cfa77f; /* light coffee color */
-  color: #4b3f2f;
-}
-.item-row button:hover {
-  background: #b98b61;
-}
-.item-row span.qty {
-  min-width: 24px;
-  text-align: center;
-  font-weight: bold;
-}
-#reset-btn, #share-btn, #pdf-btn {
-  display: inline-block;
-  margin: 5px;
-  padding: 6px 12px;
-  font-size: 16px;
-  background: #cfa77f; /* light coffee button */
-  color: #4b3f2f;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-#reset-btn:hover, #share-btn:hover, #pdf-btn:hover {
-  background: #b98b61;
-}
-#action-bar {
-  margin-top: 20px;
-  text-align: center;
-}
-#special-orders textarea {
-  width: 90%;
-  max-width: 400px;
-  min-height: 40px;
-  padding:6px;
-  border-radius:6px;
-  border:1px solid #cfa77f;
-  resize: vertical;
-  text-align: right; /* RTL text inside box */
-}
-#special-orders label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 6px;
-}
+h1 { text-align: center; color: #4b3f2f; }
+h2 { text-align: center; margin: 20px 0 10px 0; color: #4b3f2f; }
+.item-row { display: flex; justify-content: space-between; align-items: center; margin: 6px 0; padding: 6px 10px; border-radius: 6px; background: #fff5e6; }
+.item-left { display: flex; align-items: center; gap: 8px; }
+.qty-group { display: flex; align-items: center; gap: 4px; }
+.item-row button { padding: 2px 8px; font-size: 16px; cursor: pointer; border: none; border-radius: 4px; background: #cfa77f; color: #4b3f2f; }
+.item-row button:hover { background: #b98b61; }
+.item-row span.qty { min-width: 24px; text-align: center; font-weight: bold; }
+#reset-btn, #share-btn, #pdf-btn { display: inline-block; margin: 5px; padding: 6px 12px; font-size: 16px; background: #cfa77f; color: #4b3f2f; border: none; border-radius: 6px; cursor: pointer; }
+#reset-btn:hover, #share-btn:hover, #pdf-btn:hover { background: #b98b61; }
+#action-bar { margin-top: 20px; text-align: center; }
+#special-orders textarea { width: 90%; max-width: 400px; min-height: 40px; padding:6px; border-radius:6px; border:1px solid #cfa77f; resize: vertical; text-align: right; }
+#special-orders label { font-weight: bold; display: block; margin-bottom: 6px; }
 </style>
 </head>
 <body>
 <h1>لیست خرید هفتگی 🛒</h1>
 <button id="reset-btn">🔄 Reset All</button>
-
 <div id="shopping-list"></div>
 
 <!-- Special Orders Box -->
@@ -115,18 +48,24 @@ h2 {
 </div>
 
 <script>
+// Updated structured shopping data with sorting
 const shoppingData = {
-  "سبزیجات 🥦": ["پیاز","سیب زمینی","سیب زمینی کوچک","هویج","هویج کوچک","گوجه فرنگی","گوجه گیلاسی","شلغم","کدو","بادمجان","لوبیا سبز فریز شده","فلفل دلمه","فلفل سبز","کاهو","گل کلم","اسفناج","خیار","خیار شور","برکلی","لوبیا","عدس","قارچ","ذرت فریز شده"],
+  "سبزیجات 🥦": ["کاهو","برکلی","گل کلم","اسفناج","پیاز","سیب زمینی","سیب زمینی کوچک","هویج","هویج کوچک","گوجه فرنگی","گوجه گیلاسی","شلغم","کدو","بادمجان","فلفل دلمه","فلفل سبز","خیار","خیار شور","لوبیا","لوبیا سبز فریز شده","عدس","قارچ","ذرت فریز شده"],
   "میوه جات 🍎": ["سیب","موز","توت فرنگی","انگور","هندوانه","بلوبری","نارنگی","پرتقال","لبو"],
-  "لبنیات 🥛": ["شیر","ماست","پنیر","پنیر پیتزا","خامه","دوغ","کره","خامه صبحانه"],
+  "لبنیات 🥛": ["شیر","ماست","پنیر","پنیر پیتزا","خامه","دوغ","کره","خامه صبحانه","بستنی"],
   "گوشت و ماهی 🍗": ["گوشت مرغ","گوشت چرخ کرده","گوشت تیکه شده","شینسل","ناگت","ماهی سالمون"],
-  "نان و غلات 🍞": ["نان تست","نان پیتزا","نان همبر"],
-  "دیگر 🥫": ["برنج","مربا","روغن مایع","روغن زیتون","سرکه","آرد","نمک","ادویه","سس کچاپ","شکلات صبحانه","چیپس","پاپ کرن","اسنک برای مدرسه","کیک و شیرینی عصرانه","نودل","سوشی"],
+  "نان و غلات 🍞": ["نان","نان تست","نان پیتزا","نان همبر","آرد","برنج"],
+  "دیگر 🥫": ["مربا","روغن مایع","روغن زیتون","سرکه","نمک","ادویه","سس کچاپ","شکلات صبحانه","چیپس","پاپ کرن","اسنک برای مدرسه","کیک و شیرینی عصرانه","نودل","سوشی"],
   "بهداشت و شوینده 🧴": ["صابون","شامپو","مایع ظرف شویی","تاید ماشین لباس شویی","تاید ماشین ظرف شویی","دستمال کاغذی","دستمال توالت"],
   "پوشاک 👕": ["لباس و پوشاک"],
-  "خشکبار و مغزها 🌰": ["مغز گردو","مغز بادام"],
-  "متفرقه": ["دارو","قهوه","بستنی","پینات"] // updated title
+  "خشکبار و مغزها 🌰": ["مغز گردو","مغز بادام","خرما"],
+  "متفرقه": ["دارو","قهوه","پینات"]
 };
+
+// Helper function to sort items logically
+for(let category in shoppingData){
+  shoppingData[category].sort();
+}
 
 const listDiv = document.getElementById("shopping-list");
 
@@ -146,9 +85,6 @@ for (let category in shoppingData) {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = localStorage.getItem(item + "_checked") === "true";
-    checkbox.addEventListener("change", () => {
-      localStorage.setItem(item + "_checked", checkbox.checked);
-    });
 
     const nameSpan = document.createElement("span");
     nameSpan.textContent = item;
@@ -165,32 +101,43 @@ for (let category in shoppingData) {
 
     const qty = document.createElement("span");
     qty.className = "qty";
-    qty.textContent = localStorage.getItem(item + "_qty") || 1;
+
+    // Only persist number if checked
+    qty.textContent = checkbox.checked ? (localStorage.getItem(item + "_qty") || 1) : 1;
 
     const plus = document.createElement("button");
     plus.textContent = "+";
 
     minus.onclick = () => {
       let val = parseInt(qty.textContent);
-      if(val > 1) {
+      if(val > 1){
         val--;
         qty.textContent = val;
-        localStorage.setItem(item + "_qty", val);
+        if(checkbox.checked) localStorage.setItem(item + "_qty", val);
       }
     };
-
     plus.onclick = () => {
       let val = parseInt(qty.textContent);
       val++;
       qty.textContent = val;
-      localStorage.setItem(item + "_qty", val);
+      if(checkbox.checked) localStorage.setItem(item + "_qty", val);
     };
+
+    checkbox.addEventListener("change", () => {
+      if(checkbox.checked){
+        localStorage.setItem(item + "_checked", true);
+        localStorage.setItem(item + "_qty", qty.textContent);
+      } else {
+        localStorage.removeItem(item + "_checked");
+        localStorage.removeItem(item + "_qty");
+        qty.textContent = 1;
+      }
+    });
 
     qtyGroup.appendChild(minus);
     qtyGroup.appendChild(qty);
     qtyGroup.appendChild(plus);
 
-    // Append left + right to row
     itemRow.appendChild(itemLeft);
     itemRow.appendChild(qtyGroup);
 
@@ -219,9 +166,7 @@ document.getElementById("share-btn").onclick = () => {
       text: "لیست خرید هفتگی من:\n" + document.getElementById("special-text").value,
       url: window.location.href
     }).catch(console.error);
-  } else {
-    alert("Sharing not supported on this browser.");
-  }
+  } else { alert("Sharing not supported on this browser."); }
 };
 
 // PDF button
