@@ -48,21 +48,20 @@ h2 { text-align: center; margin: 20px 0 10px 0; color: #4b3f2f; }
 </div>
 
 <script>
-// Updated structured shopping data with sorting
 const shoppingData = {
   "سبزیجات 🥦": ["کاهو","برکلی","گل کلم","اسفناج","پیاز","سیب زمینی","سیب زمینی کوچک","هویج","هویج کوچک","گوجه فرنگی","گوجه گیلاسی","شلغم","کدو","بادمجان","فلفل دلمه","فلفل سبز","خیار","خیار شور","لوبیا","لوبیا سبز فریز شده","عدس","قارچ","ذرت فریز شده"],
   "میوه جات 🍎": ["سیب","موز","توت فرنگی","انگور","هندوانه","بلوبری","نارنگی","پرتقال","لبو"],
   "لبنیات 🥛": ["شیر","ماست","پنیر","پنیر پیتزا","خامه","دوغ","کره","خامه صبحانه","بستنی"],
   "گوشت و ماهی 🍗": ["گوشت مرغ","گوشت چرخ کرده","گوشت تیکه شده","شینسل","ناگت","ماهی سالمون"],
   "نان و غلات 🍞": ["نان","نان تست","نان پیتزا","نان همبر","آرد","برنج"],
-  "دیگر 🥫": ["مربا","روغن مایع","روغن زیتون","سرکه","نمک","ادویه","سس کچاپ","شکلات صبحانه","چیپس","پاپ کرن","اسنک برای مدرسه","کیک و شیرینی عصرانه","نودل","سوشی"],
+  "دیگر 🥫": ["مربا","روغن مایع","روغن زیتون","سرکه","نمک","ادویه","سس کچاپ","شکلات صبحانه","کره بادام زمینی","چیپس","پاپ کرن","اسنک برای مدرسه","کیک و شیرینی عصرانه","نودل","سوشی"],
   "بهداشت و شوینده 🧴": ["صابون","شامپو","مایع ظرف شویی","تاید ماشین لباس شویی","تاید ماشین ظرف شویی","دستمال کاغذی","دستمال توالت"],
   "پوشاک 👕": ["لباس و پوشاک"],
   "خشکبار و مغزها 🌰": ["مغز گردو","مغز بادام","خرما"],
-  "متفرقه": ["دارو","قهوه","پینات"]
+  "متفرقه": ["دارو","قهوه"]
 };
 
-// Helper function to sort items logically
+// Sort items alphabetically within each group
 for(let category in shoppingData){
   shoppingData[category].sort();
 }
@@ -92,7 +91,7 @@ for (let category in shoppingData) {
     itemLeft.appendChild(checkbox);
     itemLeft.appendChild(nameSpan);
 
-    // RIGHT: quantity
+    // RIGHT: quantity (changes only if checked)
     const qtyGroup = document.createElement("div");
     qtyGroup.className = "qty-group";
 
@@ -101,8 +100,6 @@ for (let category in shoppingData) {
 
     const qty = document.createElement("span");
     qty.className = "qty";
-
-    // Only persist number if checked
     qty.textContent = checkbox.checked ? (localStorage.getItem(item + "_qty") || 1) : 1;
 
     const plus = document.createElement("button");
